@@ -41,14 +41,17 @@ Un solo color de acento (`--accent`) y una sola escala de radios, documentada
 en la cabecera de `src/styles/global.css`:
 
 - Interactivo (botones, chips, avatares): `--r-pill`
-- Contenedor de página: `--r-shell`
 - Tarjetas, tiles e imágenes: `--r-card`
 - Campos de formulario y cajas anidadas: `--r-inner`
 
+**Ancho a sangre.** Los fondos de sección llegan a los dos bordes de la ventana
+y lo que se centra es el contenido, limitado a `--medida` (1340px). El centrado
+vive dentro de `--pad-x`, así que una sección nueva solo necesita
+`padding: var(--pad-y) var(--pad-x)` para quedar alineada con el resto.
+
 **Tema claro, y solo claro.** No hay variante oscura ni se sigue
 `prefers-color-scheme`: en salud un fondo oscuro lee como algo ajeno a la
-consulta. La jerarquía se construye con tres niveles de claridad dentro del
-marco `--wash`:
+consulta. La jerarquía se construye con tres niveles de claridad:
 
 | Token | Uso |
 | --- | --- |

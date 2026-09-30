@@ -67,9 +67,8 @@ const anio = new Date().getFullYear();
 </footer>
 
 <style>
-  /* Cierre del documento: un escalón por debajo del blanco del cuerpo y
-     por encima del marco --wash, de modo que se lee como final sin
-     recurrir a un bloque oscuro. */
+  /* Cierre del documento: un escalón por debajo del blanco del cuerpo, de
+     modo que se lee como final sin recurrir a un bloque oscuro. */
   .pie {
     background: var(--pie);
     color: var(--ink);
@@ -182,6 +181,13 @@ const anio = new Date().getFullYear();
 
   @media (max-width: 860px) {
     .pie__alto { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  /* La barra fija de móvil no debe tapar el final del pie. El hueco se
+     añade aquí, y no al envoltorio de la página, para que lo pinte el
+     mismo tono del pie y se lea como parte del cierre. */
+  @media (max-width: 720px) {
+    .pie { padding-bottom: calc(86px + clamp(22px, 2.4vw, 30px)); }
   }
 
   @media (max-width: 520px) {

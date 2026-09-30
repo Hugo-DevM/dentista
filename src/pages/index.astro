@@ -17,27 +17,16 @@ const descripcion =
 ---
 
 <Base titulo={titulo} descripcion={descripcion}>
-  <div class="shell">
-    <div class="card-shell">
-      <SiteHeader />
-      <main id="contenido">
-        <Hero />
-        <Servicios />
-        <Clinica />
-        <Especialista />
-        <Testimonios />
-        <Cita />
-      </main>
-      <SiteFooter />
-    </div>
-  </div>
+  <SiteHeader />
+  <main id="contenido">
+    <Hero />
+    <Servicios />
+    <Clinica />
+    <Especialista />
+    <Testimonios />
+    <Cita />
+  </main>
+  <SiteFooter />
 
   <BarraMovil />
 </Base>
-
-<style>
-  /* La barra fija de móvil no debe tapar el final del pie. */
-  @media (max-width: 720px) {
-    .shell { padding-bottom: 86px; }
-  }
-</style>

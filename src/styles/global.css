@@ -3,9 +3,17 @@
    --------------------------------------------------------------------------
    SISTEMA DE RADIOS (regla unica, aplicada en todo el sitio):
      - Interactivo (botones, chips, avatares, inputs redondos) .. --r-pill
-     - Contenedor de pagina (la tarjeta blanca que envuelve todo)  --r-shell
      - Tarjetas, tiles e imagenes .............................. --r-card
      - Elementos internos (inputs, selects, cajas anidadas) ..... --r-inner
+
+   ANCHO: la pagina es a sangre. Los fondos de seccion (la banda de la
+   especialista, el pie) llegan a los dos bordes de la ventana y es el
+   contenido el que se centra, limitado a --medida. Antes todo vivia dentro
+   de una tarjeta blanca de 1340px sobre un marco de color, lo que en
+   monitores grandes leia como una tarjeta flotando, no como un sitio. El
+   centrado se resuelve dentro de --pad-x, asi que cada seccion sigue
+   escribiendo un solo padding horizontal y no hace falta un envoltorio
+   interno por seccion.
 
    ACENTO UNICO: --accent. Ningun otro color funciona como acento en la pagina.
    Los tonos --tint-* son superficies, no acentos.
@@ -14,7 +22,7 @@
    lee como algo ajeno a la consulta, asi que la pagina no ofrece variante
    oscura ni sigue prefers-color-scheme. La jerarquia se construye con tres
    niveles de claridad: blanco (cuerpo), --band (la banda de la especialista,
-   el unico momento de color) y --pie (cierre), dentro del marco --wash.
+   el unico momento de color) y --pie (cierre).
    ========================================================================== */
 
 /* ---------- Tipografia auto-alojada (sin peticiones a terceros) ---------- */
@@ -106,7 +114,6 @@
   color-scheme: light;
 
   /* Superficies */
-  --wash: #e8e8f7;
   --surface: #ffffff;
   --surface-2: #f5f6fb;
   --tint-blue: #dbedfa;
@@ -138,7 +145,7 @@
   --band-2: #c5dcee;
   --band-line: #b2cfe5;
 
-  /* Pie: un escalon por debajo del blanco, por encima de --wash. */
+  /* Pie: un escalon por debajo del blanco del cuerpo. */
   --pie: #eff1f8;
   --pie-line: #dde0ee;
 
@@ -155,7 +162,6 @@
 
   /* Radios */
   --r-pill: 999px;
-  --r-shell: 28px;
   --r-card: 20px;
   --r-inner: 12px;
 
@@ -167,13 +173,19 @@
   /* Ritmo.
      --pad-y esta calibrado para que cada seccion quepa en una pantalla de
      laptop (alto util ~620px). Subirlo hace que haya que scrollear dentro
-     de una misma seccion para leerla entera. */
-  --pad-x: clamp(20px, 4.4vw, 62px);
+     de una misma seccion para leerla entera.
+
+     --pad-x hace dos trabajos en una sola declaracion: el margen minimo
+     contra el borde de la ventana y, a partir de --medida, el sobrante que
+     centra el contenido. Se usa en padding, asi que el 100% se resuelve
+     contra el ancho de la seccion; por debajo de --medida la resta es
+     negativa y gana el clamp. */
+  --medida: 1340px;
+  --pad-x: max(clamp(20px, 4.4vw, 62px), (100% - var(--medida)) / 2);
   --pad-y: clamp(44px, 4.2vw, 72px);
   --gap: clamp(12px, 1.2vw, 18px);
 
-  /* Medidas que el hero necesita para calcular su altura contra la ventana */
-  --shell-pad: clamp(10px, 1.2vw, 18px);
+  /* Medida que el hero necesita para calcular su altura contra la ventana */
   --alto-cabecera: 72px;
 
   /* Curva unica de animacion */
@@ -202,7 +214,7 @@ html {
 
 body {
   font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  background: var(--wash);
+  background: var(--surface);
   color: var(--ink);
   font-size: 16px;
   line-height: 1.5;
@@ -250,19 +262,6 @@ ul, ol { list-style: none; padding: 0; }
 }
 
 /* --------------------------- Utilidades base ---------------------------- */
-
-.shell {
-  max-width: 1340px;
-  margin-inline: auto;
-  padding: var(--shell-pad);
-}
-
-.card-shell {
-  background: var(--surface);
-  border-radius: var(--r-shell);
-  overflow: clip;
-  box-shadow: var(--shadow-lg);
-}
 
 .section {
   padding: var(--pad-y) var(--pad-x);
