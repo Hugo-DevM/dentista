@@ -1,0 +1,230 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from './Logo.astro';
+import { navegacion, CTA_PRINCIPAL, contacto } from '../data/clinica';
+---
+
+<header class="cabecera">
+  <Logo />
+
+  <nav class="cabecera__nav" aria-label="Navegación principal">
+    <ul>
+      {
+        navegacion.map((item) => (
+          <li>
+            <a href={item.href}>{item.etiqueta}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <div class="cabecera__acciones">
+    <a class="cabecera__tel" href={`tel:${contacto.telefonoHref}`}>
+      <Icon name="ph:phone" aria-hidden="true" />
+      <span>{contacto.telefono}</span>
+    </a>
+    <a class="btn btn--sm cabecera__cta" href="#cita" data-evento="cta_cita">{CTA_PRINCIPAL}</a>
+  </div>
+
+  <button
+    type="button"
+    class="cabecera__menu"
+    id="btn-menu"
+    aria-expanded="false"
+    aria-controls="menu-movil"
+  >
+    <Icon name="ph:list" class="i-abrir" aria-hidden="true" />
+    <Icon name="ph:x" class="i-cerrar" aria-hidden="true" />
+    <span class="sr-only">Abrir menú</span>
+  </button>
+</header>
+
+<div class="menu-movil" id="menu-movil" hidden>
+  <ul>
+    {
+      navegacion.map((item) => (
+        <li>
+          <a href={item.href}>
+            {item.etiqueta}
+            <Icon name="ph:arrow-up-right" aria-hidden="true" />
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <div class="menu-movil__pie">
+    <a class="btn btn--full" href="#cita" data-evento="cta_cita">{CTA_PRINCIPAL}</a>
+    <a class="btn btn--ghost btn--full" href={`tel:${contacto.telefonoHref}`}>
+      <Icon name="ph:phone" aria-hidden="true" />
+      {contacto.telefono}
+    </a>
+  </div>
+</div>
+
+<style>
+  .cabecera {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    height: 72px;
+    padding-inline: var(--pad-x);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .cabecera__nav {
+    margin-inline: auto;
+  }
+
+  .cabecera__nav ul {
+    display: flex;
+    align-items: center;
+    gap: clamp(14px, 1.8vw, 30px);
+  }
+
+  .cabecera__nav a {
+    display: block;
+    white-space: nowrap;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding: 6px 2px;
+    transition: color 0.2s var(--ease);
+  }
+
+  .cabecera__nav a:hover { color: var(--ink); }
+
+  .cabecera__acciones {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: none;
+  }
+
+  .cabecera__tel {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 0.2s var(--ease);
+  }
+
+  .cabecera__tel:hover { color: var(--accent); }
+  .cabecera__tel :global(svg) { width: 17px; height: 17px; color: var(--accent); }
+
+  .cabecera__menu {
+    display: none;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    margin-left: auto;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    cursor: pointer;
+    flex: none;
+    transition: background-color 0.2s var(--ease);
+  }
+
+  .cabecera__menu:hover { background: var(--surface-2); }
+  .cabecera__menu :global(svg) { width: 21px; height: 21px; }
+  .cabecera__menu :global(.i-cerrar) { display: none; }
+  .cabecera__menu[aria-expanded='true'] :global(.i-abrir) { display: none; }
+  .cabecera__menu[aria-expanded='true'] :global(.i-cerrar) { display: block; }
+
+  /* ---------------------------- Menú móvil ----------------------------- */
+
+  .menu-movil {
+    display: none;
+    padding: 12px var(--pad-x) 26px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu-movil[hidden] { display: none; }
+
+  .menu-movil ul {
+    display: grid;
+    margin-bottom: 20px;
+  }
+
+  .menu-movil a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .menu-movil a :global(svg) { width: 18px; height: 18px; color: var(--ink-2); }
+
+  .menu-movil__pie {
+    display: grid;
+    gap: 10px;
+  }
+
+  /* ------------------------------ Corte -------------------------------- */
+
+  @media (max-width: 1020px) {
+    .cabecera__nav,
+    .cabecera__acciones { display: none; }
+    .cabecera__menu { display: grid; }
+    .menu-movil:not([hidden]) { display: block; }
+  }
+
+  @media (max-width: 420px) {
+    .cabecera { gap: 12px; }
+  }
+</style>
+
+<script>
+  /* Menú móvil. Motivo de la animación: ninguna. El panel aparece y
+     desaparece sin transición para que el foco llegue de inmediato. */
+  const boton = document.getElementById('btn-menu');
+  const panel = document.getElementById('menu-movil');
+
+  if (boton && panel) {
+    const etiqueta = boton.querySelector('.sr-only');
+
+    const cerrar = () => {
+      boton.setAttribute('aria-expanded', 'false');
+      panel.hidden = true;
+      if (etiqueta) etiqueta.textContent = 'Abrir menú';
+    };
+
+    boton.addEventListener('click', () => {
+      const abierto = boton.getAttribute('aria-expanded') === 'true';
+      if (abierto) {
+        cerrar();
+      } else {
+        boton.setAttribute('aria-expanded', 'true');
+        panel.hidden = false;
+        if (etiqueta) etiqueta.textContent = 'Cerrar menú';
+      }
+    });
+
+    panel.querySelectorAll('a').forEach((enlace) => {
+      enlace.addEventListener('click', cerrar);
+    });
+
+    document.addEventListener('keydown', (evento) => {
+      if (evento.key === 'Escape' && boton.getAttribute('aria-expanded') === 'true') {
+        cerrar();
+        boton.focus();
+      }
+    });
+
+    // Si el usuario vuelve a escritorio con el panel abierto, se cierra.
+    const consulta = window.matchMedia('(min-width: 1021px)');
+    consulta.addEventListener('change', (e) => {
+      if (e.matches) cerrar();
+    });
+  }
+</script>

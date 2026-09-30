@@ -1,0 +1,167 @@
+---
+import '../styles/global.css';
+import Analitica from '../components/Analitica.astro';
+import { marca, contacto, servicios } from '../data/clinica';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+  imagenOg?: string;
+  /* Queda por si más adelante hay una página interna que no deba medirse. */
+  analitica?: boolean;
+}
+
+const {
+  titulo,
+  descripcion,
+  imagenOg = '/img/og-alvea.jpg',
+  analitica = true,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://www.alvea.mx');
+const ogAbsoluta = new URL(imagenOg, Astro.site ?? 'https://www.alvea.mx');
+
+/* Datos estructurados: ayudan a que la ficha aparezca en el panel local de
+   Google con horarios, dirección y teléfono. Ajustar al publicar. */
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Dentist',
+  name: marca.nombreCompleto,
+  description: descripcion,
+  url: canonical.href,
+  image: ogAbsoluta.href,
+  telephone: contacto.telefono,
+  email: contacto.correo,
+  priceRange: '$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: contacto.calle,
+    addressLocality: contacto.colonia,
+    postalCode: '11550',
+    addressRegion: 'CDMX',
+    addressCountry: 'MX',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '09:00',
+      closes: '20:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Saturday'],
+      opens: '09:00',
+      closes: '15:00',
+    },
+  ],
+  makesOffer: servicios.map((s) => ({
+    '@type': 'Offer',
+    itemOffered: { '@type': 'Service', name: s.nombre },
+  })),
+};
+---
+
+<!doctype html>
+<html lang="es-MX">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <link rel="canonical" href={canonical.href} />
+    <meta name="theme-color" content="#e8e8f7" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_MX" />
+    <meta property="og:site_name" content={marca.nombreCompleto} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogAbsoluta.href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={ogAbsoluta.href} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+
+    <link
+      rel="preload"
+      href="/fonts/jakarta-latin-400.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/jakarta-latin-800.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="/img/hero-principal.jpg" as="image" fetchpriority="high" />
+
+    <script is:inline>
+      // Marca que hay JS antes de pintar, para que el revelado al hacer scroll
+      // solo se active cuando realmente puede completarse. Sin JS el contenido
+      // se muestra de inmediato y nada queda invisible.
+      document.documentElement.classList.add('js');
+    </script>
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+
+    <Analitica activa={analitica} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <slot />
+
+    <script>
+      /* ------------------------------------------------------------------
+         Revelado al entrar en pantalla.
+         Motivo: jerarquía. Cada sección entra cuando el usuario llega a
+         ella, lo que marca dónde empieza un bloque y dónde termina el
+         anterior. Usa IntersectionObserver, nunca un listener de scroll.
+      ------------------------------------------------------------------ */
+      const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      function iniciarRevelado() {
+        const objetivos = Array.from(document.querySelectorAll<HTMLElement>('.reveal'));
+        if (objetivos.length === 0) return;
+
+        if (sinMovimiento.matches || !('IntersectionObserver' in window)) {
+          objetivos.forEach((el) => el.classList.add('is-in'));
+          return;
+        }
+
+        const observador = new IntersectionObserver(
+          (entradas) => {
+            entradas.forEach((entrada) => {
+              if (!entrada.isIntersecting) return;
+              const el = entrada.target as HTMLElement;
+              el.classList.add('is-in');
+              observador.unobserve(el);
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.12 }
+        );
+
+        objetivos.forEach((el, i) => {
+          // Escalonado por grupo: los hijos de un mismo contenedor entran
+          // en cascada corta, no todos al mismo tiempo.
+          const orden = Number(el.dataset.revealOrder ?? i % 6);
+          el.style.setProperty('--reveal-delay', `${Math.min(orden, 6) * 70}ms`);
+          observador.observe(el);
+        });
+      }
+
+      iniciarRevelado();
+      document.addEventListener('astro:after-swap', iniciarRevelado);
+    </script>
+  </body>
+</html>

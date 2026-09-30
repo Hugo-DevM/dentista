@@ -1,0 +1,106 @@
+---
+import { Icon } from 'astro-icon/components';
+import { contacto, CTA_PRINCIPAL } from '../data/clinica';
+
+const mensajeWa = encodeURIComponent(
+  'Hola, vengo del sitio de Alvea y quiero agendar una valoración.'
+);
+---
+
+{/* En móvil la acción principal queda siempre a un toque. En escritorio no
+    aparece: ahí la cabecera y el hero ya la tienen a la vista.
+    Solo se muestra cuando el botón del hero ya salió de pantalla, para no
+    duplicar la misma acción dos veces seguidas al abrir la página. */}
+<div class="barra-movil" id="barra-movil" data-visible="false">
+  <a class="btn btn--full" href="#cita">{CTA_PRINCIPAL}</a>
+  <a
+    class="barra-movil__wa"
+    href={`https://wa.me/${contacto.whatsapp}?text=${mensajeWa}`}
+    target="_blank"
+    rel="noopener"
+    aria-label="Escribir por WhatsApp"
+  >
+    <Icon name="ph:whatsapp-logo" aria-hidden="true" />
+  </a>
+</div>
+
+<style>
+  .barra-movil {
+    display: none;
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 40;
+    gap: 10px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+  }
+
+  @supports not (backdrop-filter: blur(4px)) {
+    .barra-movil { background: var(--surface); }
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .barra-movil {
+      background: var(--surface);
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  .barra-movil__wa {
+    display: grid;
+    place-items: center;
+    width: 50px;
+    height: 50px;
+    flex: none;
+    border-radius: var(--r-pill);
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: background-color 0.2s var(--ease), transform 0.16s var(--ease);
+  }
+
+  .barra-movil__wa:hover { background: var(--accent-strong); }
+  .barra-movil__wa:active { transform: scale(0.95); }
+  .barra-movil__wa :global(svg) { width: 24px; height: 24px; }
+
+  @media (max-width: 720px) {
+    .barra-movil {
+      display: flex;
+      align-items: center;
+      transform: translateY(105%);
+      transition: transform 0.32s var(--ease);
+    }
+
+    .barra-movil[data-visible='true'] { transform: none; }
+
+    /* Sin JS la barra se queda fija a la vista: vale más un botón de más
+       que una acción principal inalcanzable. */
+    :global(html:not(.js)) .barra-movil { transform: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .barra-movil { transition: none; }
+  }
+</style>
+
+<script>
+  /* La barra entra cuando el botón del hero deja de verse, y se retira si
+     el usuario vuelve arriba. IntersectionObserver, sin escuchar scroll. */
+  const barra = document.getElementById('barra-movil');
+  const anclaHero = document.querySelector('.hero__acciones');
+
+  if (barra && anclaHero && 'IntersectionObserver' in window) {
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        barra.dataset.visible = String(!entrada.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    observador.observe(anclaHero);
+  } else if (barra) {
+    barra.dataset.visible = 'true';
+  }
+</script>

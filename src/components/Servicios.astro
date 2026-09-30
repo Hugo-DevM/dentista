@@ -1,0 +1,369 @@
+---
+import { Icon } from 'astro-icon/components';
+import { servicios } from '../data/clinica';
+---
+
+<section class="servicios section" id="servicios">
+  <div class="head head--center reveal">
+    <h2>Tratamientos con precio cerrado</h2>
+    <p>
+      Presupuesto firmado antes de empezar. Abre cada tratamiento para ver qué
+      incluye y desde cuánto parte.
+    </p>
+  </div>
+
+  <div class="servicios__chips reveal" data-reveal-order="1">
+    <span class="chip"><Icon name="ph:clock" aria-hidden="true" />Citas de 45 a 90 minutos</span>
+    <span class="chip"><Icon name="ph:shield-check" aria-hidden="true" />Garantía por escrito</span>
+    <span class="chip"><Icon name="ph:check-circle" aria-hidden="true" />Pago a meses sin intereses</span>
+  </div>
+
+  <div class="servicios__panel reveal" data-reveal-order="2">
+    <div class="acordeon" id="acordeon">
+      {
+        servicios.map((s, i) => (
+          <div class="acordeon__item" data-indice={i}>
+            <h3>
+              <button
+                type="button"
+                class="acordeon__disparador"
+                id={`sv-btn-${s.id}`}
+                aria-controls={`sv-panel-${s.id}`}
+                aria-expanded={i === 0 ? 'true' : 'false'}
+              >
+                <span class="acordeon__nombre">{s.nombre}</span>
+                <span class="acordeon__signo" aria-hidden="true">
+                  <Icon name="ph:plus" class="i-mas" />
+                  <Icon name="ph:minus" class="i-menos" />
+                </span>
+              </button>
+            </h3>
+            <div
+              class:list={['acordeon__caja', { 'is-cerrado': i !== 0 }]}
+              id={`sv-panel-${s.id}`}
+              role="region"
+              aria-labelledby={`sv-btn-${s.id}`}
+              inert={i !== 0}
+            >
+              {/* contenido = solo recorte (sin padding). El relleno vive en
+                  interior, si no el padding sobrevive al colapso a 0fr y
+                  deja asomar la primera línea del panel cerrado. */}
+              <div class="acordeon__contenido">
+                <div class="acordeon__interior">
+                  <p class="acordeon__texto">{s.texto}</p>
+                  <ul class="acordeon__puntos">
+                    {s.puntos.map((p) => (
+                      <li>
+                        <Icon name="ph:check" aria-hidden="true" />
+                        {p}
+                      </li>
+                    ))}
+                  </ul>
+                  <p class="acordeon__precio">{s.desde}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+
+    <div class="servicios__visual" id="servicios-visual">
+      {
+        servicios.map((s, i) => (
+          <img
+            src={s.imagen}
+            width="880"
+            height="1000"
+            alt={s.alt}
+            loading="lazy"
+            decoding="async"
+            data-indice={i}
+            class={i === 0 ? 'is-activa' : ''}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .servicios {
+    background: var(--surface);
+  }
+
+  .servicios__chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin: 18px auto 0;
+  }
+
+  .servicios__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.84fr);
+    gap: clamp(14px, 1.8vw, 26px);
+    align-items: stretch;
+    margin-top: clamp(22px, 2.4vw, 34px);
+    padding: clamp(14px, 1.5vw, 22px);
+    border-radius: var(--r-card);
+    background: var(--tint-lilac);
+  }
+
+  /* ------------------------------ Acordeón ----------------------------- */
+
+  .acordeon {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .acordeon__item {
+    border-radius: var(--r-inner);
+    background: transparent;
+    transition: background-color 0.28s var(--ease);
+  }
+
+  .acordeon__item:has(.acordeon__disparador[aria-expanded='true']) {
+    background: var(--surface);
+  }
+
+  .acordeon__disparador {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    width: 100%;
+    padding: 13px clamp(13px, 1.3vw, 18px);
+    text-align: left;
+    cursor: pointer;
+    border-radius: var(--r-inner);
+  }
+
+  .acordeon__nombre {
+    font-size: clamp(1.02rem, 1.25vw, 1.18rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  .acordeon__signo {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-pill);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    flex: none;
+    transition: background-color 0.24s var(--ease), color 0.24s var(--ease);
+  }
+
+  .acordeon__signo :global(svg) { width: 15px; height: 15px; }
+  .acordeon__signo :global(.i-menos) { display: none; }
+
+  .acordeon__disparador:hover .acordeon__signo {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .acordeon__disparador[aria-expanded='true'] .acordeon__signo {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .acordeon__disparador[aria-expanded='true'] .acordeon__signo :global(.i-mas) { display: none; }
+  .acordeon__disparador[aria-expanded='true'] .acordeon__signo :global(.i-menos) { display: block; }
+
+  /* Apertura por grid-template-rows: anima sin tocar height ni width, así
+     el navegador solo compone. El estado cerrado lleva además el atributo
+     inert, que lo saca del orden de foco y del árbol de accesibilidad. */
+  .acordeon__caja {
+    display: grid;
+    grid-template-rows: 1fr;
+    overflow: hidden;
+  }
+
+  .acordeon__caja.is-cerrado {
+    grid-template-rows: 0fr;
+  }
+
+  :global(.js) .acordeon__caja {
+    transition: grid-template-rows 0.38s var(--ease);
+  }
+
+  .acordeon__contenido {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .acordeon__interior {
+    padding: 0 clamp(13px, 1.3vw, 18px) 16px;
+  }
+
+  .acordeon__texto {
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+
+  .acordeon__puntos {
+    display: grid;
+    gap: 7px;
+    margin-top: 13px;
+  }
+
+  .acordeon__puntos li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .acordeon__puntos :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: var(--accent);
+    flex: none;
+  }
+
+  .acordeon__precio {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 7px 15px;
+    border-radius: var(--r-pill);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    font-size: 0.813rem;
+    font-weight: 700;
+  }
+
+  /* ---------------------- Visual sincronizado -------------------------- */
+
+  .servicios__visual {
+    position: relative;
+    border-radius: var(--r-card);
+    overflow: clip;
+    background: var(--surface-2);
+    min-height: 290px;
+  }
+
+  .servicios__visual img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.03);
+    transition: opacity 0.45s var(--ease), transform 0.65s var(--ease);
+  }
+
+  .servicios__visual img.is-activa {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .servicios__visual img { transition: none; transform: none; }
+    :global(.js) .acordeon__caja { transition: none; }
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 900px) {
+    .servicios__panel {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .servicios__visual {
+      order: -1;
+      min-height: 0;
+      aspect-ratio: 16 / 10;
+    }
+    .servicios__visual img { position: absolute; }
+  }
+
+  @media (max-width: 560px) {
+    .servicios__panel { padding: 12px; }
+    .servicios__visual { aspect-ratio: 4 / 3; }
+  }
+</style>
+
+<script>
+  /* ------------------------------------------------------------------
+     Acordeón de servicios.
+     Motivo de la animación: retroalimentación. Al abrir un tratamiento
+     la imagen de la derecha cambia al de ese tratamiento, de modo que
+     la selección se confirma visualmente en dos lugares a la vez.
+  ------------------------------------------------------------------ */
+  const acordeon = document.getElementById('acordeon');
+  const visual = document.getElementById('servicios-visual');
+
+  if (acordeon) {
+    const disparadores = Array.from(
+      acordeon.querySelectorAll<HTMLButtonElement>('.acordeon__disparador')
+    );
+    const imagenes = visual
+      ? Array.from(visual.querySelectorAll<HTMLImageElement>('img'))
+      : [];
+
+    function cerrarTodos() {
+      disparadores.forEach((btn) => {
+        btn.setAttribute('aria-expanded', 'false');
+        const caja = document.getElementById(btn.getAttribute('aria-controls') ?? '');
+        if (caja) {
+          caja.classList.add('is-cerrado');
+          caja.inert = true;
+        }
+      });
+    }
+
+    function abrir(btn: HTMLButtonElement) {
+      cerrarTodos();
+      btn.setAttribute('aria-expanded', 'true');
+      const caja = document.getElementById(btn.getAttribute('aria-controls') ?? '');
+      if (caja) {
+        caja.classList.remove('is-cerrado');
+        caja.inert = false;
+      }
+
+      const item = btn.closest<HTMLElement>('.acordeon__item');
+      const indice = Number(item?.dataset.indice ?? 0);
+      imagenes.forEach((img, i) => img.classList.toggle('is-activa', i === indice));
+    }
+
+    disparadores.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const abierto = btn.getAttribute('aria-expanded') === 'true';
+        if (abierto) {
+          // Se mantiene siempre uno abierto: el panel derecho nunca queda vacío.
+          return;
+        }
+        abrir(btn);
+      });
+
+      // Navegación con flechas entre encabezados, patrón WAI-ARIA.
+      btn.addEventListener('keydown', (evento) => {
+        const teclas = ['ArrowDown', 'ArrowUp', 'Home', 'End'];
+        if (!teclas.includes(evento.key)) return;
+        evento.preventDefault();
+
+        const actual = disparadores.indexOf(btn);
+        let siguiente = actual;
+        if (evento.key === 'ArrowDown') siguiente = (actual + 1) % disparadores.length;
+        if (evento.key === 'ArrowUp') siguiente = (actual - 1 + disparadores.length) % disparadores.length;
+        if (evento.key === 'Home') siguiente = 0;
+        if (evento.key === 'End') siguiente = disparadores.length - 1;
+
+        disparadores[siguiente].focus();
+      });
+    });
+  }
+</script>

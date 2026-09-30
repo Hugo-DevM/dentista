@@ -1,0 +1,191 @@
+---
+import { Icon } from 'astro-icon/components';
+import Logo from './Logo.astro';
+import { marca, contacto, pieEnlaces } from '../data/clinica';
+
+const anio = new Date().getFullYear();
+---
+
+<footer class="pie">
+  <div class="pie__alto">
+    <div class="pie__marca">
+      <Logo href={null} />
+      <p class="pie__claim">{marca.claim}</p>
+
+      <ul class="pie__contacto">
+        <li>
+          <a href={`tel:${contacto.telefonoHref}`}>
+            <Icon name="ph:phone" aria-hidden="true" />
+            {contacto.telefono}
+          </a>
+        </li>
+        <li>
+          <a href={`mailto:${contacto.correo}`}>
+            <Icon name="ph:envelope-simple" aria-hidden="true" />
+            {contacto.correo}
+          </a>
+        </li>
+      </ul>
+
+      <ul class="pie__redes">
+        {
+          contacto.redes.map((red) => (
+            <li>
+              <a href={red.url} target="_blank" rel="noopener" aria-label={red.nombre}>
+                <Icon name={red.icono} aria-hidden="true" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <nav class="pie__columnas" aria-label="Pie de página">
+      {
+        pieEnlaces.map((columna) => (
+          <div>
+            <h3>{columna.titulo}</h3>
+            <ul>
+              {columna.enlaces.map((enlace) => (
+                <li>
+                  <a href={enlace.href}>{enlace.etiqueta}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </nav>
+  </div>
+
+  <div class="pie__bajo">
+    <p>&copy; {anio} {marca.nombreCompleto}. Todos los derechos reservados.</p>
+    <p>
+      {contacto.calle}, {contacto.colonia}, {contacto.cp}
+    </p>
+  </div>
+</footer>
+
+<style>
+  /* Cierre del documento: un escalón por debajo del blanco del cuerpo y
+     por encima del marco --wash, de modo que se lee como final sin
+     recurrir a un bloque oscuro. */
+  .pie {
+    background: var(--pie);
+    color: var(--ink);
+    border-top: 1px solid var(--pie-line);
+    padding: clamp(46px, 5vw, 72px) var(--pad-x) clamp(22px, 2.4vw, 30px);
+  }
+
+  .pie__alto {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.28fr);
+    gap: clamp(32px, 4vw, 72px);
+    padding-bottom: clamp(32px, 3.6vw, 48px);
+  }
+
+  .pie__claim {
+    margin-top: 18px;
+    max-width: 34ch;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+    line-height: 1.62;
+  }
+
+  .pie__contacto {
+    display: grid;
+    gap: 8px;
+    margin-top: 22px;
+  }
+
+  .pie__contacto a {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s var(--ease);
+  }
+
+  .pie__contacto a:hover { color: var(--accent-strong); }
+  .pie__contacto :global(svg) { width: 16px; height: 16px; color: var(--accent); }
+
+  .pie__redes {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+  }
+
+  .pie__redes a {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+
+  .pie__redes a:hover {
+    background: var(--surface);
+    border-color: var(--accent);
+    color: var(--accent-strong);
+  }
+
+  .pie__redes :global(svg) { width: 18px; height: 18px; }
+
+  /* ------------------------------ Columnas ----------------------------- */
+
+  .pie__columnas {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  .pie__columnas h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+
+  .pie__columnas ul { display: grid; gap: 10px; }
+
+  .pie__columnas a {
+    font-size: 0.875rem;
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: color 0.2s var(--ease);
+  }
+
+  .pie__columnas a:hover { color: var(--accent-strong); }
+
+  /* -------------------------------- Bajo ------------------------------- */
+
+  .pie__bajo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 24px;
+    padding-top: clamp(20px, 2.2vw, 28px);
+    border-top: 1px solid var(--pie-line);
+    font-size: 0.781rem;
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 860px) {
+    .pie__alto { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 520px) {
+    .pie__columnas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .pie__bajo { flex-direction: column; align-items: flex-start; }
+  }
+</style>

@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import Hero from '../components/Hero.astro';
+import Servicios from '../components/Servicios.astro';
+import Clinica from '../components/Clinica.astro';
+import Especialista from '../components/Especialista.astro';
+import Testimonios from '../components/Testimonios.astro';
+import Cita from '../components/Cita.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import BarraMovil from '../components/BarraMovil.astro';
+import { marca } from '../data/clinica';
+
+const titulo = `${marca.nombreCompleto} | Dentista en Polanco, CDMX`;
+const descripcion =
+  'Clínica dental en Polanco con diagnóstico por escáner 3D, presupuesto cerrado por escrito y urgencias el mismo día. Implantes, ortodoncia invisible y odontología restauradora.';
+---
+
+<Base titulo={titulo} descripcion={descripcion}>
+  <div class="shell">
+    <div class="card-shell">
+      <SiteHeader />
+      <main id="contenido">
+        <Hero />
+        <Servicios />
+        <Clinica />
+        <Especialista />
+        <Testimonios />
+        <Cita />
+      </main>
+      <SiteFooter />
+    </div>
+  </div>
+
+  <BarraMovil />
+</Base>
+
+<style>
+  /* La barra fija de móvil no debe tapar el final del pie. */
+  @media (max-width: 720px) {
+    .shell { padding-bottom: 86px; }
+  }
+</style>

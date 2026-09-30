@@ -1,0 +1,191 @@
+---
+import { especialista } from '../data/clinica';
+---
+
+<section class="especialista" id="especialista">
+  <div class="especialista__rejilla">
+    <div class="especialista__ficha reveal">
+      <span class="eyebrow especialista__etiqueta">{especialista.etiqueta}</span>
+      <h2>
+        {especialista.nombre}<br />{especialista.apellido}
+      </h2>
+      <p class="especialista__rol">{especialista.rol}</p>
+      <img
+        class="especialista__retrato"
+        src={especialista.imagen}
+        width="680"
+        height="820"
+        alt={especialista.alt}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <dl class="especialista__datos reveal" data-reveal-order="1">
+      {
+        especialista.datos.map((d) => (
+          <div>
+            <dt>{d.valor}</dt>
+            <dd>{d.texto}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <figure class="especialista__cita reveal" data-reveal-order="2">
+      <blockquote>
+        <p>{especialista.cita}</p>
+      </blockquote>
+      <figcaption>
+        <span class="especialista__firma">{especialista.firma}</span>
+        <span class="especialista__firma-rol">{especialista.firmaRol}</span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  /* Único momento de color de la página: un azul clínico claro que separa
+     esta sección sin salirse del tema claro. El texto conserva la misma
+     tinta que el resto del documento. */
+  .especialista {
+    background: var(--band);
+    color: var(--ink);
+    padding: var(--pad-y) var(--pad-x);
+  }
+
+  .especialista__rejilla {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.46fr) minmax(0, 1.05fr);
+    gap: clamp(22px, 3vw, 46px);
+    align-items: start;
+  }
+
+  /* -------------------------------- Ficha ------------------------------ */
+
+  .especialista__etiqueta {
+    padding: 6px 13px;
+    border-radius: var(--r-pill);
+    background: var(--band-2);
+    border: 1px solid var(--band-line);
+    color: var(--ink);
+  }
+
+  .especialista__ficha h2 {
+    margin-top: 20px;
+    font-size: clamp(1.65rem, 2.7vw, 2.2rem);
+    letter-spacing: -0.038em;
+    line-height: 1.07;
+  }
+
+  .especialista__rol {
+    margin-top: 12px;
+    color: var(--ink-2);
+    font-size: 0.875rem;
+    line-height: 1.55;
+    max-width: 30ch;
+  }
+
+  .especialista__retrato {
+    width: 100%;
+    max-width: 228px;
+    margin-top: 22px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: var(--r-card);
+    background: var(--band-2);
+  }
+
+  /* -------------------------------- Datos ------------------------------ */
+
+  .especialista__datos {
+    display: grid;
+    gap: 26px;
+    padding-top: 6px;
+  }
+
+  .especialista__datos dt {
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+
+  .especialista__datos dd {
+    margin-top: 3px;
+    color: var(--ink-2);
+    font-size: 0.813rem;
+    line-height: 1.45;
+  }
+
+  /* --------------------------------- Cita ------------------------------ */
+
+  /* Sin min-height: en blanco, estirarla hasta igualar la columna del
+     retrato dejaba un hueco vacío en medio. Ahora mide lo que mide su
+     contenido y la composición queda asimétrica a propósito. */
+  .especialista__cita {
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    padding: clamp(24px, 2.6vw, 38px);
+    border-radius: var(--r-card);
+    /* Blanco sobre la banda azul: la elevación separa la cita del resto
+       sin recurrir a un fondo oscuro. */
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-md);
+  }
+
+  .especialista__cita blockquote p {
+    font-size: clamp(1.1rem, 1.7vw, 1.42rem);
+    font-weight: 600;
+    letter-spacing: -0.028em;
+    line-height: 1.34;
+    text-wrap: pretty;
+  }
+
+  .especialista__cita blockquote p::before { content: '\201C'; }
+  .especialista__cita blockquote p::after { content: '\201D'; }
+
+  .especialista__cita figcaption {
+    display: grid;
+    gap: 2px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .especialista__firma {
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .especialista__firma-rol {
+    font-size: 0.813rem;
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 1020px) {
+    .especialista__rejilla {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 0.55fr);
+    }
+    .especialista__cita { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 620px) {
+    .especialista__rejilla { grid-template-columns: minmax(0, 1fr); }
+    .especialista__retrato { max-width: 100%; aspect-ratio: 5 / 4; object-position: center 22%; }
+    .especialista__datos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      padding-block: 4px;
+    }
+    .especialista__datos dt { font-size: 1rem; }
+    .especialista__datos dd { font-size: 0.75rem; }
+  }
+
+  @media (max-width: 400px) {
+    .especialista__datos { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  }
+</style>

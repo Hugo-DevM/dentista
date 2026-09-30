@@ -1,0 +1,205 @@
+---
+import { Icon } from 'astro-icon/components';
+import { clinica, CTA_PRINCIPAL } from '../data/clinica';
+---
+
+<section class="clinica section" id="clinica">
+  <div class="clinica__rejilla">
+    <div class="clinica__metricas">
+      {
+        clinica.metricas.map((m, i) => (
+          <article class:list={['metrica', `metrica--${i === 0 ? 'azul' : 'lila'}`, 'reveal']} data-reveal-order={i}>
+            <p class="metrica__valor">
+              {m.valor}
+              {m.sufijo && <span>{m.sufijo}</span>}
+            </p>
+            <p class="metrica__texto">{m.texto}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="clinica__foto reveal" data-reveal-order="1">
+      <img
+        src={clinica.imagen}
+        width="760"
+        height="980"
+        alt={clinica.alt}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <div class="clinica__texto reveal" data-reveal-order="2">
+      <h2>{clinica.titulo}</h2>
+      <p class="clinica__parrafo">{clinica.texto}</p>
+
+      <ul class="clinica__puntos">
+        {
+          clinica.puntos.map((p) => (
+            <li>
+              <span aria-hidden="true"><Icon name="ph:check" /></span>
+              {p}
+            </li>
+          ))
+        }
+      </ul>
+
+      <a class="btn clinica__cta" href="#cita">
+        {CTA_PRINCIPAL}
+        <Icon name="ph:arrow-right" aria-hidden="true" />
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .clinica {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+
+  .clinica__rejilla {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 0.84fr) minmax(0, 1.1fr);
+    gap: clamp(14px, 1.8vw, 26px);
+    align-items: stretch;
+  }
+
+  /* ------------------------------ Métricas ----------------------------- */
+
+  .clinica__metricas {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: clamp(14px, 1.8vw, 26px);
+  }
+
+  .metrica {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 18px;
+    padding: clamp(20px, 2vw, 28px);
+    border-radius: var(--r-card);
+    min-height: 168px;
+  }
+
+  .metrica--azul { background: var(--tint-blue); }
+  .metrica--lila { background: var(--tint-lilac); }
+
+  .metrica__valor {
+    font-size: clamp(2.3rem, 3.6vw, 3.1rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .metrica__valor span {
+    display: inline-block;
+    margin-left: 0.14em;
+    font-size: 0.4em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .metrica__texto {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 26ch;
+  }
+
+  /* -------------------------------- Foto ------------------------------- */
+
+  .clinica__foto img {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    border-radius: var(--r-card);
+    background: var(--surface-2);
+  }
+
+  /* ------------------------------- Texto ------------------------------- */
+
+  .clinica__texto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: clamp(0px, 1.4vw, 18px);
+  }
+
+  .clinica__texto h2 {
+    font-size: clamp(1.75rem, 2.9vw, 2.35rem);
+    max-width: 17ch;
+  }
+
+  .clinica__parrafo {
+    margin-top: 16px;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    line-height: 1.68;
+    max-width: 48ch;
+  }
+
+  .clinica__puntos {
+    display: grid;
+    gap: 11px;
+    margin-top: 24px;
+  }
+
+  .clinica__puntos li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .clinica__puntos span {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: var(--r-pill);
+    background: var(--accent-soft);
+    color: var(--accent-strong);
+    flex: none;
+  }
+
+  .clinica__puntos :global(svg) { width: 13px; height: 13px; }
+
+  .clinica__cta {
+    align-self: flex-start;
+    margin-top: 30px;
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 1020px) {
+    .clinica__rejilla {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .clinica__texto {
+      grid-column: 1 / -1;
+      order: -1;
+      padding-left: 0;
+    }
+    .clinica__texto h2 { max-width: 22ch; }
+    .clinica__foto img { min-height: 320px; }
+  }
+
+  @media (max-width: 620px) {
+    .clinica__rejilla { grid-template-columns: minmax(0, 1fr); }
+    .clinica__metricas { grid-template-columns: 1fr 1fr; grid-template-rows: auto; }
+    .metrica { min-height: 0; }
+    .clinica__foto img { min-height: 0; aspect-ratio: 4 / 3; height: auto; }
+    .clinica__cta { align-self: stretch; }
+  }
+
+  @media (max-width: 400px) {
+    .clinica__metricas { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

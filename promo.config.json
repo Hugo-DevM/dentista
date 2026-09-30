@@ -1,0 +1,38 @@
+{
+  "insignia": "Proyecto de demostración",
+  "titular": "Landing de captación\npara clínica dental",
+  "pie": "Tratamientos con precio cerrado · Agenda en línea",
+
+  "fondo": "#12152a",
+  "texto": "#ffffff",
+
+  "fuente": [
+    { "archivo": "public/fonts/jakarta-latin-400.woff2", "peso": 400 },
+    { "archivo": "public/fonts/jakarta-latin-600.woff2", "peso": 600 },
+    { "archivo": "public/fonts/jakarta-latin-700.woff2", "peso": 700 }
+  ],
+  "familia": "ui-sans-serif, system-ui, sans-serif",
+
+  "revelado": { "selector": ".reveal", "clase": "dentro" },
+
+  "secciones": [
+    {
+      "nombre": "servicios",
+      "selector": "#servicios",
+      "titular": "Sabes cuánto cuesta\nantes de sentarte",
+      "pie": "Presupuesto firmado y garantía por escrito"
+    },
+    {
+      "nombre": "especialista",
+      "selector": "#especialista",
+      "titular": "Quién te va\na atender",
+      "pie": "Especialista titular, con su formación a la vista"
+    },
+    {
+      "nombre": "cita",
+      "selector": "#cita",
+      "titular": "De la duda\na la cita",
+      "pie": "Confirmación por WhatsApp el mismo día hábil"
+    }
+  ]
+}

@@ -1,0 +1,270 @@
+---
+import { Icon } from 'astro-icon/components';
+import { testimonios } from '../data/clinica';
+---
+
+<section class="pacientes section" id="pacientes">
+  <div class="pacientes__cabeza">
+    <div class="head reveal">
+      <h2>Lo que dicen quienes ya pasaron por el sillón</h2>
+      <p>
+        Cuatro pacientes reales de tratamientos distintos. Ninguno recibió nada a cambio
+        de su comentario.
+      </p>
+    </div>
+
+    <div class="pacientes__controles reveal" data-reveal-order="1">
+      <button type="button" class="flecha" data-dir="-1" aria-label="Ver testimonios anteriores">
+        <Icon name="ph:caret-left" aria-hidden="true" />
+      </button>
+      <button type="button" class="flecha" data-dir="1" aria-label="Ver testimonios siguientes">
+        <Icon name="ph:caret-right" aria-hidden="true" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="pacientes__pista reveal"
+    id="pista-testimonios"
+    data-reveal-order="2"
+    tabindex="0"
+    role="group"
+    aria-label="Testimonios de pacientes, desplazable en horizontal"
+  >
+    {
+      testimonios.map((t) => (
+        <figure class="testimonio">
+          <div class="testimonio__estrellas" aria-label="Calificación de 5 de 5">
+            {[0, 1, 2, 3, 4].map(() => (
+              <Icon name="ph:star" aria-hidden="true" />
+            ))}
+          </div>
+          <blockquote>
+            <p>{t.texto}</p>
+          </blockquote>
+          <figcaption>
+            <img src={t.foto} width="160" height="160" alt="" loading="lazy" decoding="async" />
+            <span>
+              <span class="testimonio__nombre">{t.nombre}</span>
+              <span class="testimonio__servicio">{t.servicio}</span>
+            </span>
+          </figcaption>
+        </figure>
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  .pacientes {
+    background: var(--surface);
+  }
+
+  .pacientes__cabeza {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 28px;
+    margin-bottom: clamp(26px, 3vw, 42px);
+  }
+
+  .pacientes__cabeza .head h2 { max-width: 20ch; }
+
+  .pacientes__controles {
+    display: flex;
+    gap: 8px;
+    flex: none;
+    padding-bottom: 4px;
+  }
+
+  .flecha {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-pill);
+    border: 1px solid var(--line-strong);
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background-color 0.2s var(--ease),
+      border-color 0.2s var(--ease),
+      opacity 0.2s var(--ease),
+      transform 0.16s var(--ease);
+  }
+
+  .flecha:hover:not([disabled]) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .flecha:active:not([disabled]) { transform: scale(0.94); }
+
+  .flecha[disabled] {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  .flecha :global(svg) { width: 19px; height: 19px; }
+
+  /* -------------------------------- Pista ------------------------------ */
+
+  .pacientes__pista {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(300px, 1fr);
+    gap: var(--gap);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scroll-padding-inline: 0;
+    padding-bottom: 6px;
+    /* La barra nativa se mantiene visible: es la señal de que hay más. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pacientes__pista { scroll-behavior: auto; }
+  }
+
+  .pacientes__pista::-webkit-scrollbar { height: 6px; }
+  .pacientes__pista::-webkit-scrollbar-track { background: transparent; }
+  .pacientes__pista::-webkit-scrollbar-thumb {
+    background: var(--line-strong);
+    border-radius: var(--r-pill);
+  }
+
+  .testimonio {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-snap-align: start;
+    padding: clamp(20px, 2vw, 28px);
+    border-radius: var(--r-card);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+  }
+
+  .testimonio__estrellas {
+    display: flex;
+    gap: 2px;
+    color: var(--accent);
+  }
+
+  .testimonio__estrellas :global(svg) {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+  }
+
+  .testimonio blockquote p {
+    font-size: 0.925rem;
+    line-height: 1.62;
+    color: var(--ink);
+    text-wrap: pretty;
+  }
+
+  .testimonio figcaption {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .testimonio figcaption img {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--r-pill);
+    object-fit: cover;
+    flex: none;
+    background: var(--line);
+  }
+
+  .testimonio figcaption > span {
+    display: grid;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .testimonio__nombre {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .testimonio__servicio {
+    font-size: 0.781rem;
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 780px) {
+    .pacientes__cabeza {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 22px;
+    }
+    .pacientes__cabeza .head h2 { max-width: 100%; }
+  }
+
+  @media (max-width: 560px) {
+    .pacientes__pista { grid-auto-columns: minmax(82%, 1fr); }
+  }
+</style>
+
+<script>
+  /* ------------------------------------------------------------------
+     Carrusel de testimonios.
+     Motivo de la animación: recorrido. Cuatro comentarios no caben a lo
+     ancho sin encogerlos hasta lo ilegible, así que se recorren en
+     horizontal y las flechas avanzan de tarjeta en tarjeta.
+     El desplazamiento nativo sigue funcionando sin JS.
+  ------------------------------------------------------------------ */
+  const pista = document.getElementById('pista-testimonios');
+
+  if (pista) {
+    const flechas = Array.from(
+      document.querySelectorAll<HTMLButtonElement>('.pacientes__controles .flecha')
+    );
+
+    function pasoDeAvance() {
+      const tarjeta = pista!.querySelector<HTMLElement>('.testimonio');
+      if (!tarjeta) return pista!.clientWidth;
+      const estilos = getComputedStyle(pista!);
+      const hueco = parseFloat(estilos.columnGap || '0') || 0;
+      return tarjeta.offsetWidth + hueco;
+    }
+
+    function actualizarFlechas() {
+      const maximo = pista!.scrollWidth - pista!.clientWidth;
+      const x = pista!.scrollLeft;
+      flechas.forEach((flecha) => {
+        const dir = Number(flecha.dataset.dir);
+        const alInicio = x <= 2;
+        const alFinal = x >= maximo - 2;
+        flecha.disabled = maximo <= 0 || (dir < 0 ? alInicio : alFinal);
+      });
+    }
+
+    flechas.forEach((flecha) => {
+      flecha.addEventListener('click', () => {
+        const dir = Number(flecha.dataset.dir);
+        pista!.scrollBy({ left: dir * pasoDeAvance() });
+      });
+    });
+
+    // El scroll de la pista es local al contenedor, no de la ventana:
+    // aquí sí corresponde escuchar "scroll" sobre el elemento.
+    pista.addEventListener('scroll', actualizarFlechas, { passive: true });
+
+    const observador = new ResizeObserver(actualizarFlechas);
+    observador.observe(pista);
+
+    actualizarFlechas();
+  }
+</script>

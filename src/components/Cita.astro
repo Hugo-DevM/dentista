@@ -1,0 +1,685 @@
+---
+import { Icon } from 'astro-icon/components';
+import { cita, servicios, horariosPreferidos, contacto, CTA_PRINCIPAL } from '../data/clinica';
+---
+
+<section class="cita section" id="cita">
+  <div class="cita__rejilla">
+    <div class="cita__panel reveal">
+      <div class="head">
+        <h2>{cita.titulo}</h2>
+        <p>{cita.texto}</p>
+      </div>
+
+      <form class="formulario" id="form-cita" novalidate>
+        <div class="campo">
+          <label for="f-nombre">Nombre completo</label>
+          <input
+            type="text"
+            id="f-nombre"
+            name="nombre"
+            autocomplete="name"
+            required
+            aria-describedby="f-nombre-error"
+          />
+          <p class="campo__error" id="f-nombre-error" data-error hidden>
+            <Icon name="ph:warning-circle" aria-hidden="true" />
+            <span></span>
+          </p>
+        </div>
+
+        <div class="campo">
+          <label for="f-telefono">Teléfono con WhatsApp</label>
+          <input
+            type="tel"
+            id="f-telefono"
+            name="telefono"
+            inputmode="tel"
+            autocomplete="tel"
+            placeholder="55 1234 5678"
+            required
+            aria-describedby="f-telefono-ayuda f-telefono-error"
+          />
+          <p class="campo__ayuda" id="f-telefono-ayuda">
+            Confirmamos por ahí el mismo día hábil. Diez dígitos.
+          </p>
+          <p class="campo__error" id="f-telefono-error" data-error hidden>
+            <Icon name="ph:warning-circle" aria-hidden="true" />
+            <span></span>
+          </p>
+        </div>
+
+        <div class="campo">
+          <label for="f-correo">
+            Correo electrónico
+            <span class="campo__opcional">Opcional</span>
+          </label>
+          <input
+            type="email"
+            id="f-correo"
+            name="correo"
+            autocomplete="email"
+            placeholder="tunombre@correo.com"
+            aria-describedby="f-correo-error"
+          />
+          <p class="campo__error" id="f-correo-error" data-error hidden>
+            <Icon name="ph:warning-circle" aria-hidden="true" />
+            <span></span>
+          </p>
+        </div>
+
+        <div class="formulario__par">
+          <div class="campo">
+            <label for="f-tratamiento">Tratamiento de interés</label>
+            <div class="campo__select">
+              <select id="f-tratamiento" name="tratamiento" required aria-describedby="f-tratamiento-error">
+                <option value="">Elige uno</option>
+                {servicios.map((s) => <option value={s.nombre}>{s.nombre}</option>)}
+                <option value="Todavía no lo sé">Todavía no lo sé</option>
+              </select>
+              <Icon name="ph:caret-right" aria-hidden="true" />
+            </div>
+            <p class="campo__error" id="f-tratamiento-error" data-error hidden>
+              <Icon name="ph:warning-circle" aria-hidden="true" />
+              <span></span>
+            </p>
+          </div>
+
+          <div class="campo">
+            <label for="f-horario">Horario preferido</label>
+            <div class="campo__select">
+              <select id="f-horario" name="horario" required aria-describedby="f-horario-error">
+                <option value="">Elige uno</option>
+                {horariosPreferidos.map((h) => <option value={h}>{h}</option>)}
+              </select>
+              <Icon name="ph:caret-right" aria-hidden="true" />
+            </div>
+            <p class="campo__error" id="f-horario-error" data-error hidden>
+              <Icon name="ph:warning-circle" aria-hidden="true" />
+              <span></span>
+            </p>
+          </div>
+        </div>
+
+        <div class="campo campo--casilla">
+          <label class="casilla" for="f-aviso">
+            <input type="checkbox" id="f-aviso" name="aviso" required aria-describedby="f-aviso-error" />
+            <span>
+              Acepto que Alvea use mis datos para contactarme, según el{' '}
+              <a href="/aviso-de-privacidad">aviso de privacidad</a>.
+            </span>
+          </label>
+          <p class="campo__error" id="f-aviso-error" data-error hidden>
+            <Icon name="ph:warning-circle" aria-hidden="true" />
+            <span></span>
+          </p>
+        </div>
+
+        <button type="submit" class="btn btn--lg btn--full" id="f-enviar">
+          <span class="f-enviar__texto">{CTA_PRINCIPAL}</span>
+          <Icon name="ph:circle-notch" class="f-enviar__spinner" aria-hidden="true" />
+        </button>
+
+        <p class="formulario__aviso" role="status" aria-live="polite" id="form-aviso" hidden></p>
+      </form>
+    </div>
+
+    <div class="cita__lado">
+      <div class="cita__foto reveal" data-reveal-order="1">
+        <img
+          src={cita.imagen}
+          width="1000"
+          height="780"
+          alt={cita.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+
+      <address class="sede reveal" data-reveal-order="2">
+        <div class="sede__bloque">
+          <span class="sede__rotulo"><Icon name="ph:map-pin" aria-hidden="true" />Dónde estamos</span>
+          <p class="sede__linea">{contacto.calle}</p>
+          <p class="sede__linea">{contacto.colonia}</p>
+          <p class="sede__linea">{contacto.cp}</p>
+          <a class="sede__enlace" href={contacto.mapa} target="_blank" rel="noopener">
+            Ver en el mapa
+            <Icon name="ph:arrow-up-right" aria-hidden="true" />
+          </a>
+        </div>
+
+        <div class="sede__bloque">
+          <span class="sede__rotulo"><Icon name="ph:clock" aria-hidden="true" />Horarios</span>
+          <dl class="sede__horarios">
+            {
+              contacto.horarios.map((h) => (
+                <div>
+                  <dt>{h.dias}</dt>
+                  <dd>{h.horas}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </div>
+      </address>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cita {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+
+  .cita__rejilla {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.02fr);
+    gap: clamp(22px, 3vw, 52px);
+    align-items: start;
+  }
+
+  .cita__panel .head h2 { max-width: 15ch; }
+
+  /* ----------------------------- Formulario ---------------------------- */
+
+  .formulario {
+    display: grid;
+    gap: 13px;
+    margin-top: clamp(20px, 2.2vw, 28px);
+  }
+
+  .formulario__par {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+  }
+
+  .campo { display: grid; gap: 6px; }
+
+  .campo label {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 0.813rem;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+
+  .campo__opcional {
+    font-size: 0.719rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+
+  .campo input[type='text'],
+  .campo input[type='tel'],
+  .campo input[type='email'],
+  .campo select {
+    width: 100%;
+    padding: 11px 15px;
+    border-radius: var(--r-inner);
+    border: 1px solid var(--line-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.925rem;
+    transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  }
+
+  /* Texto sustituto calibrado a 4.6:1 sobre blanco: se distingue de un
+     valor escrito pero sigue siendo legible. */
+  .campo ::placeholder {
+    color: var(--ink-placeholder);
+    opacity: 1;
+  }
+
+  .campo input:hover,
+  .campo select:hover { border-color: var(--ink-3); }
+
+  .campo input:focus-visible,
+  .campo select:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  .campo[data-invalido] input,
+  .campo[data-invalido] select {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+  }
+
+  .campo__select { position: relative; }
+
+  .campo__select select {
+    appearance: none;
+    padding-right: 42px;
+    cursor: pointer;
+  }
+
+  .campo__select :global(svg) {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    width: 16px;
+    height: 16px;
+    transform: translateY(-50%) rotate(90deg);
+    color: var(--ink-2);
+    pointer-events: none;
+  }
+
+  .campo__ayuda {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    color: var(--ink-2);
+  }
+
+  .campo__error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--danger);
+  }
+
+  .campo__error[hidden] { display: none; }
+  .campo__error :global(svg) { width: 14px; height: 14px; flex: none; }
+
+  /* ------------------------------- Casilla ----------------------------- */
+
+  .casilla {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.813rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: var(--ink-2);
+    cursor: pointer;
+  }
+
+  .casilla input {
+    width: 18px;
+    height: 18px;
+    margin-top: 1px;
+    flex: none;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+
+  .casilla a {
+    color: var(--accent-strong);
+    text-underline-offset: 2px;
+  }
+
+  .campo--casilla[data-invalido] .casilla { color: var(--danger); }
+
+  /* ---------------------------- Botón enviar --------------------------- */
+
+  #f-enviar { margin-top: 6px; }
+
+  .f-enviar__spinner { display: none; }
+
+  #f-enviar[data-cargando='true'] .f-enviar__spinner {
+    display: block;
+    animation: girar 0.9s linear infinite;
+  }
+
+  @keyframes girar {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #f-enviar[data-cargando='true'] .f-enviar__spinner { animation-duration: 2.4s; }
+  }
+
+  .formulario__aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 13px 16px;
+    border-radius: var(--r-inner);
+    font-size: 0.813rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .formulario__aviso[hidden] { display: none; }
+
+  .formulario__aviso[data-tono='ok'] {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+
+  .formulario__aviso[data-tono='error'] {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+
+  .formulario__aviso :global(a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* -------------------------------- Lado ------------------------------- */
+
+  .cita__lado {
+    display: grid;
+    gap: var(--gap);
+  }
+
+  .cita__foto img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: var(--r-card);
+    background: var(--surface-2);
+  }
+
+  .sede {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    padding: clamp(20px, 2vw, 28px);
+    border-radius: var(--r-card);
+    background: var(--tint-blue);
+    font-style: normal;
+  }
+
+  .sede__rotulo {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .sede__rotulo :global(svg) { width: 16px; height: 16px; color: var(--accent-strong); }
+
+  .sede__linea {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+  }
+
+  .sede__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    font-size: 0.813rem;
+    font-weight: 700;
+    color: var(--accent-strong);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 1px;
+  }
+
+  .sede__enlace :global(svg) { width: 14px; height: 14px; }
+
+  .sede__horarios { display: grid; gap: 9px; }
+
+  .sede__horarios dt {
+    font-size: 0.813rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .sede__horarios dd {
+    font-size: 0.813rem;
+    color: var(--ink-2);
+  }
+
+  /* ------------------------------- Cortes ------------------------------ */
+
+  @media (max-width: 960px) {
+    .cita__rejilla { grid-template-columns: minmax(0, 1fr); }
+    .cita__panel .head h2 { max-width: 20ch; }
+    .cita__lado { order: -1; }
+  }
+
+  @media (max-width: 520px) {
+    .formulario__par { grid-template-columns: minmax(0, 1fr); }
+    .sede { grid-template-columns: minmax(0, 1fr); }
+    .cita__foto img { aspect-ratio: 3 / 2; }
+  }
+</style>
+
+<script>
+  import { contacto } from '../data/clinica';
+
+  /* ------------------------------------------------------------------
+     Envío del formulario.
+
+     Sin backend configurado, el formulario arma un mensaje de WhatsApp
+     con los datos y lo abre: funciona desde el primer despliegue.
+
+     Para recibir los envíos por correo o en un CRM, pon aquí la URL de
+     tu servicio (Formspree, Netlify Forms, Basin, tu propia API) y el
+     formulario pasará a hacer POST de JSON a esa dirección.
+  ------------------------------------------------------------------ */
+  const ENDPOINT_FORMULARIO = '';
+
+  const formulario = document.getElementById('form-cita') as HTMLFormElement | null;
+  const boton = document.getElementById('f-enviar') as HTMLButtonElement | null;
+  const aviso = document.getElementById('form-aviso');
+
+  if (formulario && boton && aviso) {
+    const textoBoton = boton.querySelector('.f-enviar__texto');
+    const etiquetaOriginal = textoBoton?.textContent ?? 'Enviar';
+
+    const reglas: Record<string, (valor: string, campo: HTMLElement) => string | null> = {
+      nombre: (v) => {
+        if (!v.trim()) return 'Escribe tu nombre.';
+        if (v.trim().length < 3) return 'El nombre parece demasiado corto.';
+        return null;
+      },
+      telefono: (v) => {
+        const digitos = v.replace(/\D/g, '');
+        if (!digitos) return 'Necesitamos un teléfono para confirmarte.';
+        if (digitos.length < 10) return 'Faltan dígitos. Escribe los 10 del número.';
+        if (digitos.length > 13) return 'Ese número tiene dígitos de más.';
+        return null;
+      },
+      correo: (v) => {
+        if (!v.trim()) return null;
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim())) return 'Revisa el correo, algo no cuadra.';
+        return null;
+      },
+      tratamiento: (v) => (v ? null : 'Elige un tratamiento.'),
+      horario: (v) => (v ? null : 'Elige un horario.'),
+      aviso: (v) => (v === 'on' ? null : 'Necesitamos tu autorización para contactarte.'),
+    };
+
+    function contenedor(control: HTMLElement) {
+      return control.closest<HTMLElement>('.campo');
+    }
+
+    function pintarError(control: HTMLElement, mensaje: string | null) {
+      const campo = contenedor(control);
+      if (!campo) return;
+      const caja = campo.querySelector<HTMLElement>('[data-error]');
+      const texto = caja?.querySelector('span');
+
+      if (mensaje) {
+        campo.setAttribute('data-invalido', '');
+        control.setAttribute('aria-invalid', 'true');
+        if (caja && texto) {
+          texto.textContent = mensaje;
+          caja.hidden = false;
+        }
+      } else {
+        campo.removeAttribute('data-invalido');
+        control.removeAttribute('aria-invalid');
+        if (caja) caja.hidden = true;
+      }
+    }
+
+    function valorDe(control: HTMLInputElement | HTMLSelectElement) {
+      if (control instanceof HTMLInputElement && control.type === 'checkbox') {
+        return control.checked ? 'on' : '';
+      }
+      return control.value;
+    }
+
+    function validarControl(control: HTMLInputElement | HTMLSelectElement) {
+      const regla = reglas[control.name];
+      if (!regla) return true;
+      const mensaje = regla(valorDe(control), control);
+      pintarError(control, mensaje);
+      return mensaje === null;
+    }
+
+    const controles = Array.from(
+      formulario.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input, select')
+    );
+
+    controles.forEach((control) => {
+      // Se valida al salir del campo, no mientras se escribe: corregir a
+      // media palabra produce errores que aparecen y desaparecen solos.
+      control.addEventListener('blur', () => validarControl(control));
+      control.addEventListener('change', () => {
+        if (contenedor(control)?.hasAttribute('data-invalido')) validarControl(control);
+      });
+    });
+
+    /* Analítica: quién empieza el formulario, para poder comparar contra quién
+       lo termina. Sin este par de eventos no hay forma de saber si la clínica
+       pierde pacientes por falta de visitas o a medio formulario.
+
+       Va con `?.` porque el ayudante solo existe si hay PUBLIC_GA_ID: sin
+       analítica configurada el formulario funciona igual. */
+    formulario.addEventListener(
+      'input',
+      () => window.medirEvento?.('inicio_solicitud_cita'),
+      { once: true }
+    );
+
+    /* Solo el tratamiento y el horario, que son los que dicen qué demanda
+       llega. Nombre, teléfono y correo no se mandan nunca a GA4: son datos
+       personales y no tienen nada que hacer en un informe. */
+    function medirSolicitud(metodo: 'endpoint' | 'whatsapp', datos: Record<string, unknown>) {
+      window.medirEvento?.('solicitud_cita', {
+        metodo,
+        tratamiento: String(datos.tratamiento ?? ''),
+        horario: String(datos.horario ?? ''),
+      });
+    }
+
+    function mostrarAviso(
+      tono: 'ok' | 'error',
+      mensaje: string,
+      respaldo?: { texto: string; url: string }
+    ) {
+      aviso!.dataset.tono = tono;
+      aviso!.textContent = mensaje;
+
+      // El enlace se construye como nodo, nunca con innerHTML: los datos
+      // los escribe el visitante y no deben interpretarse como marcado.
+      if (respaldo) {
+        aviso!.append(' ');
+        const enlace = document.createElement('a');
+        enlace.href = respaldo.url;
+        enlace.target = '_blank';
+        enlace.rel = 'noopener';
+        enlace.textContent = respaldo.texto;
+        aviso!.append(enlace);
+      }
+
+      aviso!.hidden = false;
+    }
+
+    /* Navegación a WhatsApp mediante un ancla sintética.
+       window.open(url, '_blank', 'noopener') devuelve null siempre, por
+       definición, así que no sirve para saber si la ventana se abrió.
+       Un clic de ancla conserva la activación del usuario y no lo bloquean
+       los navegadores; además dejamos el enlace visible por si acaso. */
+    function abrirEnPestana(url: string) {
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.target = '_blank';
+      enlace.rel = 'noopener';
+      enlace.style.display = 'none';
+      document.body.appendChild(enlace);
+      enlace.click();
+      enlace.remove();
+    }
+
+    function cargando(activo: boolean) {
+      boton!.dataset.cargando = String(activo);
+      boton!.disabled = activo;
+      if (textoBoton) textoBoton.textContent = activo ? 'Enviando' : etiquetaOriginal;
+    }
+
+    formulario.addEventListener('submit', async (evento) => {
+      evento.preventDefault();
+      aviso!.hidden = true;
+
+      const validos = controles.map((c) => validarControl(c));
+      if (validos.includes(false)) {
+        const primerFallo = formulario.querySelector<HTMLElement>('[data-invalido] input, [data-invalido] select');
+        primerFallo?.focus();
+        mostrarAviso('error', 'Revisa los campos marcados y vuelve a enviar.');
+        return;
+      }
+
+      const datos = Object.fromEntries(new FormData(formulario).entries());
+      cargando(true);
+
+      try {
+        if (ENDPOINT_FORMULARIO) {
+          const respuesta = await fetch(ENDPOINT_FORMULARIO, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify(datos),
+          });
+          if (!respuesta.ok) throw new Error(`Respuesta ${respuesta.status}`);
+
+          /* La conversión. `metodo` distingue el envío directo del rebote por
+             WhatsApp: son dos experiencias distintas y no cierran igual. En
+             GA4 hay que marcar este evento como evento clave. */
+          medirSolicitud('endpoint', datos);
+
+          formulario.reset();
+          mostrarAviso(
+            'ok',
+            'Listo. Recibimos tus datos y te confirmamos horario por WhatsApp el mismo día hábil.'
+          );
+        } else {
+          const mensaje = [
+            'Hola, quiero agendar una valoración en Alvea.',
+            `Nombre: ${datos.nombre}`,
+            `Teléfono: ${datos.telefono}`,
+            datos.correo ? `Correo: ${datos.correo}` : null,
+            `Tratamiento: ${datos.tratamiento}`,
+            `Horario preferido: ${datos.horario}`,
+          ]
+            .filter(Boolean)
+            .join('\n');
+
+          const url = `https://wa.me/${contacto.whatsapp}?text=${encodeURIComponent(mensaje)}`;
+          medirSolicitud('whatsapp', datos);
+          abrirEnPestana(url);
+          formulario.reset();
+          mostrarAviso(
+            'ok',
+            'Abrimos WhatsApp con tus datos. Envía el mensaje para cerrar la cita. Si no se abrió solo,',
+            { texto: 'toca aquí.', url }
+          );
+        }
+      } catch {
+        mostrarAviso(
+          'error',
+          `No pudimos enviar la solicitud. Llámanos al ${contacto.telefono} y la agendamos por teléfono.`
+        );
+      } finally {
+        cargando(false);
+      }
+    });
+  }
+</script>
